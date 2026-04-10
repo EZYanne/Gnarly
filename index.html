@@ -47,6 +47,10 @@ body::-webkit-scrollbar{width:9px;}body::-webkit-scrollbar-track{background:#0D0
 .tab-badge{background:var(--accent-red);color:#fff;font-family:var(--font-mono);font-size:9px;font-weight:700;padding:1px 5px;border-radius:2px;margin-left:4px;display:inline-block;animation:pulseBadge 2s infinite;}
 @keyframes pulseBadge{0%,100%{opacity:1;}50%{opacity:.55;}}
 .main{padding:20px;}
+
+/* ── FIX: Reduced main padding on mobile ── */
+@media(max-width:600px){.main{padding:12px 10px;}}
+
 .page{display:none;}
 .page.active{display:block;animation:fadeUp .28s ease;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
@@ -81,7 +85,7 @@ body::-webkit-scrollbar{width:9px;}body::-webkit-scrollbar-track{background:#0D0
 .filter-wrap .sel-icon{position:absolute;left:9px;font-size:12px;color:var(--mustard);pointer-events:none;z-index:1;}
 .filter-sel{background:#0D0D0D;border:var(--border);font-family:var(--font-mono);font-size:11px;padding:8px 10px 8px 28px;box-shadow:var(--shadow-sm);cursor:pointer;color:var(--mustard);outline:none;transition:box-shadow var(--tr);appearance:none;min-width:130px;}
 .filter-sel:focus{box-shadow:4px 4px 0 var(--mustard-dark);}
-.table-wrap{background:var(--white);border:var(--border);box-shadow:var(--shadow);overflow-x:auto;transition:background var(--tr);scrollbar-width:thin;scrollbar-color:#E8C31A #0D0D0D;}
+.table-wrap{background:var(--white);border:var(--border);box-shadow:var(--shadow);overflow-x:auto;transition:background var(--tr);scrollbar-width:thin;scrollbar-color:#E8C31A #0D0D0D;-webkit-overflow-scrolling:touch;}
 .table-wrap::-webkit-scrollbar{height:7px;}.table-wrap::-webkit-scrollbar-track{background:#0D0D0D;}.table-wrap::-webkit-scrollbar-thumb{background:#E8C31A;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 table th{background:#0D0D0D;color:var(--mustard);font-family:var(--font-display);font-size:12px;letter-spacing:1.5px;padding:10px 12px;text-align:left;border-right:2px solid #222;white-space:nowrap;cursor:pointer;user-select:none;transition:background .15s;}
@@ -161,7 +165,13 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
 .inner-tab{font-family:var(--font-display);font-size:13px;letter-spacing:1px;padding:8px 16px;cursor:pointer;color:var(--text-muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all var(--tr);white-space:nowrap;}
 .inner-tab:hover{color:var(--text);}
 .inner-tab.active{color:var(--mustard);border-bottom-color:var(--mustard);}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px;}
+
+/* ── FIX: KPI grid min-width clamp on mobile ── */
+@media(max-width:480px){
+  .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+
 .kpi-box{background:var(--surface);border:2px solid var(--border-col);padding:12px 14px;position:relative;overflow:hidden;}
 .kpi-box i{position:absolute;bottom:4px;right:4px;font-size:36px;opacity:.5;}
 .kpi-val{font-family:var(--font-display);font-size:26px;color:var(--mustard);}
@@ -190,7 +200,68 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
 .top-rank{font-family:var(--font-display);font-size:22px;color:var(--mustard);width:28px;flex-shrink:0;}
 .top-name{font-size:12px;font-weight:600;flex:1;}
 .top-val{font-family:var(--font-mono);font-size:11px;color:var(--text-muted);}
-@media(max-width:600px){.form-grid,.form-grid3{grid-template-columns:1fr;}.topbar-meta{display:none;}.section-title{font-size:24px;}}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE FIXES — REPORTS TABLES
+   ══════════════════════════════════════════ */
+
+/* 1. All report table wrappers get horizontal scroll */
+.report-tab .table-scroll-wrap{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:#E8C31A #0D0D0D;
+  margin-bottom:0;
+}
+.report-tab .table-scroll-wrap::-webkit-scrollbar{height:6px;}
+.report-tab .table-scroll-wrap::-webkit-scrollbar-track{background:#0D0D0D;}
+.report-tab .table-scroll-wrap::-webkit-scrollbar-thumb{background:#E8C31A;}
+
+/* 2. Report tables: min-width so columns don't squish; let wrapper scroll */
+.report-tab table{
+  min-width:560px;
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+}
+
+/* 3. Prog-rows on small screens: allow label to shrink/wrap */
+@media(max-width:600px){
+  .prog-row{flex-wrap:wrap;gap:4px;}
+  .prog-label{width:auto;text-align:left;flex:0 0 100%;}
+  .prog-val{width:auto;}
+  .prog-track{flex:1 1 100%;}
+
+  /* Tighter card padding on mobile */
+  .card{padding:12px;}
+  .card-title{font-size:13px;}
+
+  /* Section title smaller on mobile */
+  .section-title{font-size:24px;}
+
+  /* Form grids collapse to 1 col */
+  .form-grid,.form-grid3{grid-template-columns:1fr;}
+
+  /* Topbar meta hidden */
+  .topbar-meta{display:none;}
+
+  /* KPI value smaller on very small screens */
+  .kpi-val{font-size:20px;}
+
+  /* Reorder-alert table cells tighter */
+  .report-tab table th,
+  .report-tab table td{padding:6px 8px;font-size:11px;}
+}
+
+@media(max-width:480px){
+  /* Stack inner tabs naturally, they already scroll but make text smaller */
+  .inner-tab{font-size:11px;padding:7px 10px;}
+
+  /* Chart bars: hide value labels on tiny screens to avoid clutter */
+  .chart-bar-val{display:none;}
+}
+/* ══════════════════════════════════════════ */
+
 </style>
 </head>
 <body>
@@ -473,7 +544,8 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
       <div class="card"><div class="card-title"><i class="fa-solid fa-chart-bar"></i>ORDER STATUS BREAKDOWN</div><div id="report-status-bars"></div></div>
       <div class="card"><div class="card-title"><i class="fa-solid fa-truck"></i>COURIER PERFORMANCE</div><div id="report-courier-perf"></div></div>
     </div>
-    <div class="card"><div class="card-title"><i class="fa-solid fa-shirt"></i>PRODUCT PERFORMANCE</div><div id="report-products"></div></div>
+    <!-- ── FIX: wrapped in scrollable div ── -->
+    <div class="card"><div class="card-title"><i class="fa-solid fa-shirt"></i>PRODUCT PERFORMANCE</div><div class="table-scroll-wrap"><div id="report-products"></div></div></div>
   </div>
   <div id="report-orders" class="report-tab" style="display:none;">
     <div class="card" style="margin-bottom:14px;"><div class="card-title"><i class="fa-solid fa-calendar"></i>MONTHLY ORDER TREND</div><div class="chart-bar-wrap" id="report-monthly-orders" style="height:140px;"></div></div>
@@ -483,7 +555,8 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
     </div>
   </div>
   <div id="report-inventory" class="report-tab" style="display:none;">
-    <div class="card" style="margin-bottom:14px;"><div class="card-title"><i class="fa-solid fa-triangle-exclamation" style="color:var(--accent-red);"></i>REORDER ALERTS</div><div id="report-reorder-list"></div></div>
+    <!-- ── FIX: reorder-alerts table in scrollable wrapper ── -->
+    <div class="card" style="margin-bottom:14px;"><div class="card-title"><i class="fa-solid fa-triangle-exclamation" style="color:var(--accent-red);"></i>REORDER ALERTS</div><div class="table-scroll-wrap"><div id="report-reorder-list"></div></div></div>
     <div class="card"><div class="card-title"><i class="fa-solid fa-layer-group"></i>STOCK BY CATEGORY</div><div id="report-cat-stock"></div></div>
   </div>
   <div id="report-profit" class="report-tab" style="display:none;">
@@ -661,9 +734,6 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
 
 <script>
 (function() {
-  // ============================================================
-  // APP STATE
-  // ============================================================
   var APP = {
     ROWS_PER_PAGE: 7,
     darkMode: false,
@@ -688,9 +758,6 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
 
   var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-  // ============================================================
-  // MOCK DATA
-  // ============================================================
   var MOCK_ORDERS = [
     {id:1,orderno:'SH-26-0041983',name:'Maria Santos',orders:'Gnarly Logo Tee (Black, M) x1',amount:450,courier:'J&T',status:'Delivered',remarks:'Gift-wrapped',date:'2026-01-15'},
     {id:2,orderno:'SH-26-0052210',name:'Kevin Dela Cruz',orders:'Gnarly OG Cap (Yellow) x1, Gnarly Shorts (L) x1',amount:980,courier:'SPX',status:'In Transit',remarks:'COD - 980',date:'2026-01-22'},
@@ -752,9 +819,6 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
   APP.nextInvId = APP.inventory.length + 1;
   APP.nextSaleId = APP.sales.length + 1;
 
-  // ============================================================
-  // UTILITIES
-  // ============================================================
   function formatPeso(n) {
     return '\u20B1' + Number(n || 0).toLocaleString('en-PH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
   }
@@ -861,9 +925,7 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
     });
   }
 
-  // ============================================================
   // ORDERS
-  // ============================================================
   var editOrderId = null;
 
   window.sortOrders = function(k) {
@@ -971,9 +1033,7 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
     logActivity('Export', 'Orders CSV exported', '#AA55FF');
   };
 
-  // ============================================================
   // INVENTORY
-  // ============================================================
   var editInvId = null;
 
   window.sortInv = function(k) {
@@ -1091,9 +1151,7 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
     logActivity('Export', 'Inventory CSV exported', '#AA55FF');
   };
 
-  // ============================================================
   // SALES
-  // ============================================================
   var editSaleId = null;
 
   window.sortSales = function(k) {
@@ -1256,9 +1314,7 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
     logActivity('Export', 'Sales CSV exported', '#AA55FF');
   };
 
-  // ============================================================
   // DASHBOARD
-  // ============================================================
   function renderDashboard() {
     var totalRev = APP.sales.reduce(function(a, s){ return a + s.revenue; }, 0);
     var totalOrders = APP.orders.length;
@@ -1334,9 +1390,7 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
     document.getElementById('top-products-list').innerHTML = topP.length ? tpHtml : '<div class="empty-state" style="padding:20px;"><i class="fa-solid fa-fire"></i>No data</div>';
   }
 
-  // ============================================================
   // REPORTS
-  // ============================================================
   var currentReport = 'overview';
 
   window.switchReport = function(tab) {
@@ -1354,6 +1408,28 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
     else if (currentReport === 'orders') renderReportOrders();
     else if (currentReport === 'inventory') renderReportInventory();
     else if (currentReport === 'profit') renderReportProfit();
+  }
+
+  // ── FIX: report tables injected inside .table-scroll-wrap via #report-products and #report-reorder-list
+  // The wrapper div already exists in HTML, so we just inject the table HTML directly.
+
+  function makeReportTable(headers, rows) {
+    var headerBg = '#0D0D0D';
+    var headerColor = 'var(--mustard)';
+    var html = '<table><thead><tr>';
+    headers.forEach(function(h) {
+      html += '<th style="background:' + headerBg + ';color:' + headerColor + ';font-family:var(--font-display);padding:8px 12px;text-align:left;white-space:nowrap;">' + h + '</th>';
+    });
+    html += '</tr></thead><tbody>';
+    rows.forEach(function(cells) {
+      html += '<tr>';
+      cells.forEach(function(c, ci) {
+        html += '<td style="padding:8px 12px;border-bottom:1px solid #e0ddd0;' + (c.style || '') + '">' + c.html + '</td>';
+      });
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    return html;
   }
 
   function renderReportOverview() {
@@ -1385,7 +1461,7 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
       var all = APP.orders.filter(function(o){ return o.courier === c; });
       var del = all.filter(function(o){ return o.status === 'Delivered'; }).length;
       var rate = all.length ? Math.round((del / all.length) * 100) : 0;
-      cpHtml += '<div class="prog-row"><div class="prog-label" style="width:90px;">' + c + '</div><div class="prog-track"><div class="prog-fill" style="width:' + rate + '%;background:#7ED957;"></div></div><div class="prog-val">' + all.length + ' orders \u00B7 ' + rate + '% del.</div></div>';
+      cpHtml += '<div class="prog-row"><div class="prog-label" style="width:90px;">' + c + '</div><div class="prog-track"><div class="prog-fill" style="width:' + rate + '%;background:#7ED957;"></div></div><div class="prog-val">' + all.length + ' \u00B7 ' + rate + '%</div></div>';
     });
     document.getElementById('report-courier-perf').innerHTML = cpHtml;
 
@@ -1397,26 +1473,19 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
       prodMap[s.product].profit += s.profit;
     });
     var sorted = Object.keys(prodMap).map(function(k){ return [k, prodMap[k]]; }).sort(function(a, b){ return b[1].revenue - a[1].revenue; });
-    var rpHtml = '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr>' +
-      '<th style="background:#0D0D0D;color:var(--mustard);font-family:var(--font-display);padding:8px 12px;text-align:left;">PRODUCT</th>' +
-      '<th style="background:#0D0D0D;color:var(--mustard);font-family:var(--font-display);padding:8px 12px;">CATEGORY</th>' +
-      '<th style="background:#0D0D0D;color:var(--mustard);font-family:var(--font-display);padding:8px 12px;">QTY SOLD</th>' +
-      '<th style="background:#0D0D0D;color:var(--mustard);font-family:var(--font-display);padding:8px 12px;">REVENUE</th>' +
-      '<th style="background:#0D0D0D;color:var(--mustard);font-family:var(--font-display);padding:8px 12px;">PROFIT</th>' +
-      '<th style="background:#0D0D0D;color:var(--mustard);font-family:var(--font-display);padding:8px 12px;">MARGIN</th>' +
-      '</tr></thead><tbody>';
-    sorted.forEach(function(entry) {
+    var rows = sorted.map(function(entry) {
       var d = entry[1];
       var m = d.revenue ? Math.round((d.profit / d.revenue) * 100) : 0;
-      rpHtml += '<tr><td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">' + entry[0] + '</td>' +
-        '<td style="padding:8px 12px;border-bottom:1px solid #eee;font-family:var(--font-mono);font-size:10px;">' + d.category + '</td>' +
-        '<td style="padding:8px 12px;border-bottom:1px solid #eee;font-family:var(--font-mono);text-align:center;">' + d.qty + '</td>' +
-        '<td style="padding:8px 12px;border-bottom:1px solid #eee;font-family:var(--font-mono);">' + formatPeso(d.revenue) + '</td>' +
-        '<td style="padding:8px 12px;border-bottom:1px solid #eee;font-family:var(--font-mono);color:#7ED957;">' + formatPeso(d.profit) + '</td>' +
-        '<td style="padding:8px 12px;border-bottom:1px solid #eee;font-family:var(--font-mono);">' + m + '%</td></tr>';
+      return [
+        {html: entry[0], style: 'font-weight:600;min-width:160px;'},
+        {html: '<span style="font-family:var(--font-mono);font-size:10px;">' + d.category + '</span>'},
+        {html: d.qty, style: 'font-family:var(--font-mono);text-align:center;'},
+        {html: formatPeso(d.revenue), style: 'font-family:var(--font-mono);'},
+        {html: '<span style="color:#7ED957;">' + formatPeso(d.profit) + '</span>', style: 'font-family:var(--font-mono);'},
+        {html: m + '%', style: 'font-family:var(--font-mono);'}
+      ];
     });
-    rpHtml += '</tbody></table>';
-    document.getElementById('report-products').innerHTML = rpHtml;
+    document.getElementById('report-products').innerHTML = makeReportTable(['PRODUCT','CATEGORY','QTY SOLD','REVENUE','PROFIT','MARGIN'], rows);
   }
 
   function renderReportOrders() {
@@ -1457,24 +1526,17 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
   function renderReportInventory() {
     var needReorder = APP.inventory.filter(function(inv){ return inv.stock <= inv.reorder; }).sort(function(a, b){ return a.stock - b.stock; });
     if (needReorder.length) {
-      var rrHtml = '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr>' +
-        '<th style="background:#D92B2B;color:#fff;font-family:var(--font-display);padding:8px 12px;text-align:left;">SKU</th>' +
-        '<th style="background:#D92B2B;color:#fff;font-family:var(--font-display);padding:8px 12px;">PRODUCT</th>' +
-        '<th style="background:#D92B2B;color:#fff;font-family:var(--font-display);padding:8px 12px;">STOCK</th>' +
-        '<th style="background:#D92B2B;color:#fff;font-family:var(--font-display);padding:8px 12px;">REORDER PT</th>' +
-        '<th style="background:#D92B2B;color:#fff;font-family:var(--font-display);padding:8px 12px;">STATUS</th>' +
-        '<th style="background:#D92B2B;color:#fff;font-family:var(--font-display);padding:8px 12px;">ACTION</th>' +
-        '</tr></thead><tbody>';
-      needReorder.forEach(function(inv) {
-        rrHtml += '<tr><td style="padding:8px 12px;border-bottom:1px solid #eee;font-family:var(--font-mono);font-size:10px;">' + inv.sku + '</td>' +
-          '<td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">' + inv.name + '</td>' +
-          '<td style="padding:8px 12px;border-bottom:1px solid #eee;font-family:var(--font-display);font-size:20px;color:' + (inv.stock === 0 ? 'var(--accent-red)' : '#FF9922') + ';">' + inv.stock + '</td>' +
-          '<td style="padding:8px 12px;border-bottom:1px solid #eee;font-family:var(--font-mono);">' + inv.reorder + '</td>' +
-          '<td style="padding:8px 12px;border-bottom:1px solid #eee;">' + stockBadge(inv.stock, inv.reorder) + '</td>' +
-          '<td style="padding:8px 12px;border-bottom:1px solid #eee;"><button class="btn btn-sm btn-ghost" onclick="openInventoryModal(' + inv.id + ');switchTab(\'inventory\')"><i class="fa-solid fa-pen"></i> RESTOCK</button></td></tr>';
+      var rows = needReorder.map(function(inv) {
+        return [
+          {html: '<span style="font-family:var(--font-mono);font-size:10px;">' + inv.sku + '</span>'},
+          {html: '<span style="font-weight:600;">' + inv.name + '</span>', style: 'min-width:140px;'},
+          {html: '<span style="font-family:var(--font-display);font-size:20px;color:' + (inv.stock === 0 ? 'var(--accent-red)' : '#FF9922') + ';">' + inv.stock + '</span>'},
+          {html: '<span style="font-family:var(--font-mono);">' + inv.reorder + '</span>'},
+          {html: stockBadge(inv.stock, inv.reorder)},
+          {html: '<button class="btn btn-sm btn-ghost" onclick="openInventoryModal(' + inv.id + ');switchTab(\'inventory\')"><i class="fa-solid fa-pen"></i> RESTOCK</button>'}
+        ];
       });
-      rrHtml += '</tbody></table>';
-      document.getElementById('report-reorder-list').innerHTML = rrHtml;
+      document.getElementById('report-reorder-list').innerHTML = makeReportTable(['SKU','PRODUCT','STOCK','REORDER PT','STATUS','ACTION'], rows);
     } else {
       document.getElementById('report-reorder-list').innerHTML = '<div class="empty-state" style="padding:20px;"><i class="fa-solid fa-circle-check"></i>ALL STOCK LEVELS OK</div>';
     }
@@ -1489,7 +1551,7 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
       var outItems = items.filter(function(inv){ return inv.stock === 0; }).length;
       var lowItems = items.filter(function(inv){ return inv.stock > 0 && inv.stock <= inv.reorder; }).length;
       csHtml += '<div style="margin-bottom:14px;padding:12px;background:var(--surface);border:2px solid var(--border-col);">' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">' +
         '<div style="font-family:var(--font-display);font-size:16px;letter-spacing:1px;color:' + catColors[ci] + ';">' + cat + '</div>' +
         '<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">' + items.length + ' SKUs \u00B7 ' + totalStock + ' units \u00B7 ' + formatPeso(totalValue) + '</div></div>' +
         '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
@@ -1538,9 +1600,7 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
     document.getElementById('pl-monthly-chart').innerHTML = plHtml;
   }
 
-  // ============================================================
   // ACTIVITY
-  // ============================================================
   function renderActivity() {
     var list = document.getElementById('activity-log-list');
     if (!APP.activity.length) {
@@ -1556,9 +1616,7 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
 
   window.clearActivity = function() { APP.activity = []; renderActivity(); showToast('Activity log cleared!'); };
 
-  // ============================================================
   // SETTINGS
-  // ============================================================
   window.saveSettings = function() {
     APP.settings.defval = parseFloat(document.getElementById('set-defval').value) || 450;
     APP.settings.lowstock = parseInt(document.getElementById('set-lowstock').value) || 10;
@@ -1567,9 +1625,7 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
     showToast('Settings saved!');
   };
 
-  // ============================================================
   // DELETE / CONFIRM
-  // ============================================================
   window.confirmDelete = function(type, id) {
     var labels = { order: 'this order', inv: 'this product from inventory', sale: 'this sale transaction' };
     document.getElementById('confirm-msg').textContent = 'Are you sure you want to delete ' + (labels[type] || 'this item') + '? This cannot be undone.';
@@ -1599,9 +1655,7 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
   window.doConfirm = function() { if (APP.confirmCallback) APP.confirmCallback(); };
   window.cancelConfirm = function() { document.getElementById('confirm-overlay').classList.remove('open'); APP.confirmCallback = null; };
 
-  // ============================================================
   // RESET ALL DATA
-  // ============================================================
   window.resetAllData = function() {
     APP.confirmCallback = function() {
       APP.orders = MOCK_ORDERS.map(function(o){ return Object.assign({}, o); });
@@ -1620,9 +1674,7 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
     document.getElementById('confirm-overlay').classList.add('open');
   };
 
-  // ============================================================
   // CSV EXPORT
-  // ============================================================
   function downloadCSV(filename, rows) {
     var csv = rows.map(function(r) {
       return r.map(function(v){ return '"' + String(v).replace(/"/g, '""') + '"'; }).join(',');
@@ -1635,9 +1687,7 @@ body.dark-mode table tr:hover td{background:#1e1e16;}
     URL.revokeObjectURL(a.href);
   }
 
-  // ============================================================
   // INIT
-  // ============================================================
   renderOrders();
   renderInventory();
   renderSales();
